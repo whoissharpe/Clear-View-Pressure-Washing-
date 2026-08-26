@@ -1,0 +1,9 @@
+node_modules/
+dist/
+
+# Working artefacts from the design pass - not part of the deliverable.
+# The optimised renditions in assets/img and assets/video ARE committed;
+# these are just the oversized masters and verification renders.
+assets/design/check-*
+assets/design/comp-*
+assets/design/raw-*.png

@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Clear View Pressure Washing & Auto Detail — DESIGN TOKENS
+   --------------------------------------------------------------------------
+   This is the SINGLE SOURCE OF TRUTH for the brand's visual system.
+   Change a value here and it updates everywhere on the site.
+
+   CONTRAST NOTE (WCAG 2.1 AA) — every text/background pair below was
+   measured with scripts/contrast.py. Ratios are recorded next to each token.
+   The one hard rule that must not be broken:
+
+     --cv-accent (#17C3F2) scores only 1.97:1 on light surfaces.
+     On light backgrounds it is a FILL colour ONLY (with --cv-accent-ink
+     text on top). For cyan-coloured TEXT or icons on light backgrounds,
+     use --cv-accent-dark (#0A6FB8 = 5.00:1).
+
+   ========================================================================== */
+
+:root {
+
+  /* --- SURFACES ----------------------------------------------------------
+     --cv-navy is sampled directly from the client's supplied logo artwork
+     so the site ground and the logo background are the same colour.        */
+  --cv-navy:        #0A1626;   /* primary dark ground (hero, CTA, area)      */
+  --cv-slate:       #11253C;   /* secondary dark ground (process section)    */
+  --cv-footer:      #060F1B;   /* footer, one step deeper than navy          */
+  --cv-paper:       #F7F9FB;   /* primary light ground                       */
+  --cv-white:       #FFFFFF;   /* raised light surfaces                      */
+
+  /* --- INK --------------------------------------------------------------- */
+  --cv-ink:         #0A1626;   /* body text on light      - 17.22:1 on paper */
+  --cv-ink-muted:   #495A6B;   /* secondary text on light -  6.73:1 on paper */
+  --cv-bone:        #E9F1F8;   /* body text on dark       - 15.92:1 on navy  */
+  --cv-bone-muted:  #A4BCD1;   /* secondary text on dark  -  9.25:1 on navy  */
+
+  /* --- BRAND BLUES -------------------------------------------------------
+     One hue, two surface-specific steps. This is the rule that keeps the
+     palette accessible, and it exists because the bright step scores only
+     2.46:1 against paper - too low to be a button on a light background.
+
+       on DARK  grounds -> --cv-accent  (#4FA8E8)
+                           as text on navy 7.01:1
+                           as a fill, label it with --cv-accent-ink 6.01:1
+       on LIGHT grounds -> --cv-brand   (#2E6DA4, the logo's own blue)
+                           as text on paper 5.18:1
+                           as a fill, label it with white 5.47:1
+     Never put --cv-accent on a light surface, or --cv-brand on a dark one. */
+  --cv-brand:       #2E6DA4;   /* the logo blue. Accent for LIGHT surfaces.  */
+  --cv-brand-ink:   #FFFFFF;   /* text on a --cv-brand fill      -  5.47:1   */
+  --cv-brand-hover: #245A8A;
+  --cv-accent:      #4FA8E8;   /* accent for DARK surfaces (text + fill)     */
+  --cv-accent-ink:  #06263B;   /* text on a --cv-accent fill     -  6.01:1   */
+  --cv-accent-hover:#6FB6EA;
+
+  /* --- LINES / HAIRLINES ------------------------------------------------- */
+  --cv-line-light:  rgba(10, 22, 38, .12);
+  --cv-line-light-strong: rgba(10, 22, 38, .22);
+  --cv-line-dark:   rgba(233, 241, 248, .16);
+  --cv-line-dark-strong:  rgba(233, 241, 248, .30);
+
+  /* --- FEEDBACK ---------------------------------------------------------- */
+  --cv-error-dark:  #FFB3A4;   /* error text on dark grounds     - 10.59:1   */
+
+  /* --- FOCUS ------------------------------------------------------------- */
+  --cv-focus:       #4FA8E8;   /* focus ring on dark surfaces                */
+  --cv-focus-light: #2E6DA4;   /* focus ring on light surfaces               */
+  --cv-focus-width: 3px;
+  --cv-focus-offset: 3px;
+
+  /* --- TYPE FAMILIES ----------------------------------------------------- */
+  /* Geist: one self-hosted variable file (weights 300-800, latin subset,
+     29 KB). A single family keeps the critical path short; hierarchy is
+     built from weight, size and tracking rather than a second typeface.     */
+  --cv-font: "Geist", ui-sans-serif, system-ui, -apple-system,
+             "Segoe UI", sans-serif;
+
+  /* --- TYPE SCALE (fluid, mobile-first) ---------------------------------- */
+  --cv-text-micro:  0.6875rem;                              /* 11px labels   */
+  --cv-text-xs:     0.8125rem;                              /* 13px          */
+  --cv-text-sm:     0.9375rem;                              /* 15px          */
+  --cv-text-base:   1rem;                                   /* 16px body     */
+  --cv-text-lg:     clamp(1.0625rem, 0.4vw + 0.97rem, 1.1875rem);
+  --cv-text-xl:     clamp(1.25rem,  0.8vw + 1.06rem, 1.5rem);
+  --cv-text-2xl:    clamp(1.5rem,   1.4vw + 1.16rem, 2rem);
+  --cv-h3:          clamp(1.25rem,  0.9vw + 1.04rem, 1.5rem);
+  --cv-h2:          clamp(1.875rem, 3.1vw + 1.15rem, 3.25rem);
+  --cv-h1:          clamp(2.625rem, 6.2vw + 1.1rem,  5.75rem);
+  --cv-display:     clamp(3.5rem,   11vw + 0.5rem,   9rem);  /* ghost numerals */
+
+  /* --- TYPE TREATMENT ---------------------------------------------------- */
+  --cv-tracking-label: 0.18em;   /* wide-tracked uppercase micro-labels       */
+  --cv-tracking-tight: -0.022em; /* large display headings                    */
+  --cv-leading-tight:  1.04;
+  --cv-leading-snug:   1.25;
+  --cv-leading-body:   1.6;
+
+  --cv-weight-regular: 400;
+  --cv-weight-medium:  500;
+  --cv-weight-semi:    600;
+  --cv-weight-bold:    700;
+
+  /* --- SPACING SCALE (8px base) ------------------------------------------ */
+  --cv-space-1:  0.25rem;   /*  4 */
+  --cv-space-2:  0.5rem;    /*  8 */
+  --cv-space-3:  0.75rem;   /* 12 */
+  --cv-space-4:  1rem;      /* 16 */
+  --cv-space-5:  1.5rem;    /* 24 */
+  --cv-space-6:  2rem;      /* 32 */
+  --cv-space-7:  3rem;      /* 48 */
+  --cv-space-8:  4rem;      /* 64 */
+  --cv-space-9:  6rem;      /* 96 */
+
+  /* Section rhythm — generous by design. */
+  --cv-section-y: clamp(4rem, 8vw, 7.5rem);
+  --cv-gutter:    clamp(1.25rem, 5vw, 4rem);
+  --cv-maxw:      78rem;
+  --cv-maxw-text: 62ch;
+
+  /* --- RADII ------------------------------------------------------------- */
+  --cv-radius-none: 0;
+  --cv-radius-sm:   4px;
+  --cv-radius-md:   10px;
+  --cv-radius-lg:   18px;
+  --cv-radius-pill: 999px;
+
+  /* --- ELEVATION ---------------------------------------------------------
+     Deliberately restrained: this design uses hairlines and spacing for
+     hierarchy, not drop shadows. Shadows appear only on floating UI.       */
+  --cv-shadow-sm: 0 1px 2px rgba(11, 26, 43, .06);
+  --cv-shadow-md: 0 8px 24px -8px rgba(11, 26, 43, .18);
+  --cv-shadow-lg: 0 18px 48px -12px rgba(11, 26, 43, .28);
+
+  /* --- MOTION ------------------------------------------------------------
+     Custom easing only. Slow, heavy, premium — never bouncy.               */
+  --cv-ease:       cubic-bezier(.32, .72, 0, 1);
+  --cv-ease-out:   cubic-bezier(.16, 1, .3, 1);
+  --cv-dur-fast:   180ms;
+  --cv-dur-mid:    420ms;
+  --cv-dur-slow:   820ms;
+
+  /* --- LAYOUT ------------------------------------------------------------ */
+  --cv-tap-min:   44px;   /* minimum touch target */
+  --cv-mobilebar: 68px;   /* height of the sticky mobile call bar */
+}
