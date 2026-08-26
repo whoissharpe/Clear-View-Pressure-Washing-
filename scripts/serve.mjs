@@ -8,6 +8,7 @@
 import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
+import { createGzip } from 'node:zlib';
 import path from 'node:path';
 
 const ROOT = path.resolve(process.argv[2] || '.');
@@ -43,15 +44,29 @@ createServer(async (req, res) => {
     const info = await stat(file);
     if (info.isDirectory()) { res.writeHead(302, { Location: rel + '/' }).end(); return; }
 
-    res.writeHead(200, {
-      'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
-      'Content-Length': info.size,
-      'Cache-Control': 'no-cache',
-    });
-    createReadStream(file).pipe(res);
+    const ext = path.extname(file).toLowerCase();
+    const type = TYPES[ext] || 'application/octet-stream';
+
+    /* Compress text the way Cloudflare Pages does, so local Lighthouse runs
+       are representative. Images, video and woff2 are already compressed. */
+    const COMPRESSIBLE = ['.html', '.css', '.js', '.json', '.svg', '.xml', '.txt', '.webmanifest'];
+    const wantsGzip = /gzip/i.test(req.headers['accept-encoding'] || '')
+      && COMPRESSIBLE.includes(ext);
+
+    const headers = { 'Content-Type': type, 'Cache-Control': 'no-cache' };
+    if (wantsGzip) {
+      headers['Content-Encoding'] = 'gzip';
+      headers['Vary'] = 'Accept-Encoding';
+      res.writeHead(200, headers);
+      createReadStream(file).pipe(createGzip()).pipe(res);
+    } else {
+      headers['Content-Length'] = info.size;
+      res.writeHead(200, headers);
+      createReadStream(file).pipe(res);
+    }
   } catch {
     res.writeHead(404, { 'Content-Type': 'text/plain' }).end('Not found');
   }
 }).listen(PORT, () => {
-  console.log('serving ' + ROOT + ' on http://localhost:' + PORT);
+  console.log('serving ' + ROOT + ' on http://localhost:' + PORT + ' [gzip enabled]');
 });

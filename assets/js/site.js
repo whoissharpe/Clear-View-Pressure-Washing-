@@ -40,9 +40,12 @@
     var openMenu = function () {
       window.clearTimeout(closeTimer);
       menu.hidden = false;
-      // force a reflow so the transition runs from the hidden state
-      void menu.offsetHeight;
-      menu.classList.add('is-open');
+      // Let the browser paint the hidden state once before transitioning to
+      // the open one. A double rAF avoids the forced synchronous layout that
+      // reading offsetHeight would cause.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { menu.classList.add('is-open'); });
+      });
       toggle.setAttribute('aria-expanded', 'true');
       toggle.setAttribute('aria-label', 'Close menu');
       document.body.style.overflow = 'hidden';
@@ -103,12 +106,35 @@
      ---------------------------------------------------------------------- */
   var hero = document.querySelector('.hero__video');
   if (hero && !reduceMotion) {
+    // Only reveal the video once it can actually play, so the hero never
+    // flashes an empty box over the poster.
+    var reveal = function () { hero.classList.add('is-ready'); };
+    if (hero.readyState >= 3) reveal();
+    else hero.addEventListener('canplay', reveal, { once: true });
+
+    // Start loading only after the page has settled, so the loop never
+    // competes with the poster for bandwidth during first paint.
     window.addEventListener('load', function () {
-      if (hero.paused) {
-        var p = hero.play();
-        if (p && typeof p.catch === 'function') p.catch(function () { /* poster stays */ });
-      }
+      hero.load();
+      var p = hero.play();
+      if (p && typeof p.catch === 'function') p.catch(function () { /* poster stays */ });
     });
+
+    // Pause/play control. WCAG 2.2.2 requires a way to stop motion that
+    // auto-starts and runs longer than five seconds; this loop repeats
+    // indefinitely, so prefers-reduced-motion alone is not sufficient.
+    var motionBtn = document.getElementById('hero-motion');
+    if (motionBtn) {
+      motionBtn.hidden = false;
+      motionBtn.addEventListener('click', function () {
+        var paused = hero.paused;
+        if (paused) hero.play();
+        else hero.pause();
+        motionBtn.setAttribute('aria-pressed', paused ? 'false' : 'true');
+        motionBtn.setAttribute('aria-label',
+          paused ? 'Pause the background video' : 'Play the background video');
+      });
+    }
   }
 
   /* ----------------------------------------------------------------------
@@ -213,7 +239,7 @@
 
       var button = form.querySelector('button[type="submit"]');
       button.disabled = true;
-      status.textContent = 'Sending...';
+      status.textContent = 'Sending…';
 
       fetch(endpoint, {
         method: 'POST',

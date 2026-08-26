@@ -15,6 +15,7 @@
  */
 import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { transform } from 'esbuild';
 
 const OUT = 'dist';
 
@@ -57,7 +58,7 @@ await writeFile(path.join(OUT, 'index.html'), html);
 
 /* ---- static assets -------------------------------------------------------- */
 const COPY = [
-  'assets/js', 'assets/brand', 'assets/fonts', 'assets/img', 'assets/video',
+  'assets/brand', 'assets/fonts', 'assets/img', 'assets/video',
   'robots.txt', 'sitemap.xml', 'site.webmanifest', '_headers',
 ];
 
@@ -65,9 +66,16 @@ for (const entry of COPY) {
   await cp(entry, path.join(OUT, entry), { recursive: true });
 }
 
+/* JS stays a separate file (deferred, cacheable) but ships minified. */
+const js = await readFile('assets/js/site.js', 'utf8');
+const minJs = (await transform(js, { loader: 'js', minify: true, target: 'es2018' })).code;
+await mkdir(path.join(OUT, 'assets/js'), { recursive: true });
+await writeFile(path.join(OUT, 'assets/js/site.js'), minJs);
+
 /* assets/design holds the working masters and never ships */
 
 const kb = (s) => (s / 1024).toFixed(1) + ' KB';
 console.log('built ' + OUT + '/');
 console.log('  index.html ' + kb(Buffer.byteLength(html)) + ' (css inlined, ' + kb(Buffer.byteLength(inlined)) + ' of it)');
+console.log('  assets/js/site.js ' + kb(Buffer.byteLength(js)) + ' -> ' + kb(Buffer.byteLength(minJs)));
 console.log('  copied: ' + COPY.join(', '));

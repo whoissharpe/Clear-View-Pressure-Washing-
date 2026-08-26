@@ -39,6 +39,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
+  /* light UI so native controls and autofill render correctly */
+  color-scheme: light;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   /* stop anchor targets hiding under the sticky header */
@@ -61,6 +63,13 @@ body {
 }
 
 img, svg, video { display: block; max-width: 100%; }
+
+/* Kill the 300ms double-tap zoom delay and set the tap flash deliberately
+   rather than leaving the browser default grey box. */
+a, button, input, textarea, select, label, summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(79, 168, 232, .18);
+}
 img, video { height: auto; }
 
 h1, h2, h3, h4 {
@@ -281,6 +290,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
+  min-height: var(--cv-tap-min);   /* keeps the logo a full-size tap target */
   text-decoration: none;
   color: var(--cv-bone);
 }
@@ -368,15 +378,19 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   display: grid;
   align-content: center;
   padding: var(--cv-space-8) var(--cv-gutter);
-  background: rgba(11, 26, 43, .97);
+  background: rgba(10, 22, 38, .97);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
+  overscroll-behavior: contain;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--cv-dur-mid) var(--cv-ease),
-              visibility var(--cv-dur-mid) var(--cv-ease);
+  /* Only opacity is transitioned. `visibility` is a discrete property, so
+     transitioning it would leave the panel visibility:hidden until halfway
+     through the animation - which also makes focus() silently fail on the
+     links inside. The `hidden` attribute (toggled in site.js) handles
+     removing the panel from the tree entirely. */
+  transition: opacity var(--cv-dur-mid) var(--cv-ease);
 }
-.mobile-menu.is-open { opacity: 1; visibility: visible; }
+.mobile-menu.is-open { opacity: 1; }
 .mobile-menu__list { display: grid; gap: var(--cv-space-2); }
 .mobile-menu__link {
   display: block;
@@ -423,11 +437,22 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 
 .hero__bg { position: absolute; inset: 0; z-index: -2; background: var(--cv-navy); }
+.hero__bg picture { position: absolute; inset: 0; display: block; }
+
+/* the poster carries first paint; the video fades in on top of it */
+.hero__poster,
 .hero__video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+.hero__video {
+  opacity: 0;
+  transition: opacity 900ms var(--cv-ease);
+}
+.hero__video.is-ready { opacity: 1; }
 
 /* Legibility scrim. Two gradients: horizontal (heaviest behind the copy on
    the left) plus vertical (protects the header and the trust strip).        */
@@ -458,6 +483,32 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   color: var(--cv-bone);
   text-shadow: 0 2px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.7);
 }
+/* discreet pause/play for the background loop */
+.hero__motion {
+  /* sits in normal flow, pushed to the right edge above the trust strip */
+  display: flex;
+  margin: 0 0 var(--cv-space-4) auto;
+  align-items: center;
+  justify-content: center;
+  width: var(--cv-tap-min);
+  height: var(--cv-tap-min);
+  padding: 0;
+  color: var(--cv-bone);
+  background: rgba(10, 22, 38, .55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--cv-line-dark-strong);
+  border-radius: var(--cv-radius-pill);
+  cursor: pointer;
+  transition: background-color var(--cv-dur-fast) var(--cv-ease),
+              border-color var(--cv-dur-fast) var(--cv-ease);
+}
+.hero__motion:hover { background: rgba(10, 22, 38, .78); border-color: var(--cv-accent); }
+.hero__motion svg { width: 1rem; height: 1rem; }
+.hero__motion .hero__motion-play { display: none; }
+.hero__motion[aria-pressed="true"] .hero__motion-pause { display: none; }
+.hero__motion[aria-pressed="true"] .hero__motion-play { display: block; }
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -763,7 +814,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: url("../img/texture-water-900.webp") center / cover no-repeat;
+  background: image-set(url("../img/texture-water-520.avif") type("image/avif"), url("../img/texture-water-520.webp") type("image/webp")) center / cover no-repeat;
   opacity: .10;
   mix-blend-mode: screen;
   pointer-events: none;
@@ -832,7 +883,9 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   color: var(--cv-accent);
 }
 .phone__num {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--cv-tap-min);
   margin-top: var(--cv-space-1);
   font-size: var(--cv-text-2xl);
   font-weight: var(--cv-weight-bold);
@@ -922,8 +975,16 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   color: var(--cv-bone);
   margin-bottom: var(--cv-space-4);
 }
-.footer__list { display: grid; gap: var(--cv-space-2); font-size: var(--cv-text-sm); }
-.footer__list a { color: var(--cv-bone-muted); text-decoration: none; }
+.footer__list { display: grid; font-size: var(--cv-text-sm); }
+.footer__list li { display: flex; align-items: center; min-height: 2.25rem; }
+/* full-height, full-width hit area so footer links clear 44px on a phone */
+.footer__list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--cv-tap-min);
+  color: var(--cv-bone-muted);
+  text-decoration: none;
+}
 .footer__list a:hover { color: var(--cv-accent); text-decoration: underline; }
 .footer__blurb { margin-top: var(--cv-space-4); font-size: var(--cv-text-sm); max-width: 32ch; }
 .footer__bottom {
@@ -984,13 +1045,9 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 
+  /* the poster <img> is already in the markup, so removing the video is all
+     that is needed - no background-image fallback to keep in sync */
   .hero__video { display: none; }
-  .hero__bg {
-    background-image: image-set(url("../img/hero-poster-1920.avif") type("image/avif"),
-                                url("../img/hero-poster-1920.webp") type("image/webp"));
-    background-size: cover;
-    background-position: center;
-  }
 
   .reveal { opacity: 1; transform: none; transition: none; }
 

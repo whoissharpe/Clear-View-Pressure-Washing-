@@ -133,7 +133,7 @@
 <header class="site-header" id="site-header">
   <div class="wrap site-header__inner">
 
-    <a class="brand" href="#top" aria-label="Clear View Pressure Washing and Auto Detail, home">
+    <a class="brand" href="#top">
       <svg class="brand__mark" aria-hidden="true" focusable="false"><use href="#cv-mark"></use></svg>
       <span>
         <span class="brand__name">Clear View</span>
@@ -189,11 +189,25 @@
      ====================================================================== -->
 <section class="hero" id="top">
   <div class="hero__bg" aria-hidden="true">
-    <!-- Muted, looping, playsinline, poster-first. The drift is baked into the
-         clip itself rather than animated in CSS, so it costs nothing to run
-         and cannot jank. Removed entirely under prefers-reduced-motion. -->
+    <!-- The poster is a real <img>, not the video’s poster attribute. That
+         matters: it is what the preload in <head> points at, it is responsive,
+         and it means the LCP element is a small AVIF rather than the video.
+         Using poster="" instead downloaded the still twice (once for the
+         preload, once for the video) and made the <video> the LCP. -->
+    <picture>
+      <source type="image/avif" sizes="100vw"
+              srcset="assets/img/hero-poster-960.avif 960w, assets/img/hero-poster-1440.avif 1440w, assets/img/hero-poster-1920.avif 1920w">
+      <source type="image/webp" sizes="100vw"
+              srcset="assets/img/hero-poster-960.webp 960w, assets/img/hero-poster-1440.webp 1440w, assets/img/hero-poster-1920.webp 1920w">
+      <img class="hero__poster" src="assets/img/hero-poster-1440.webp"
+           width="1920" height="1080" alt="" fetchpriority="high" decoding="async">
+    </picture>
+
+    <!-- Muted, looping, playsinline. The drift is baked into the clip itself
+         rather than animated in CSS, so it costs nothing to run and cannot
+         jank. It fades in over the poster once it can actually play, and is
+         removed entirely under prefers-reduced-motion. -->
     <video class="hero__video" autoplay muted loop playsinline preload="none"
-           poster="assets/img/hero-poster-1440.webp"
            width="1280" height="720" tabindex="-1" aria-hidden="true">
       <source media="(max-width: 47.99rem)" src="assets/video/hero-mobile.webm" type="video/webm">
       <source media="(max-width: 47.99rem)" src="assets/video/hero-mobile.mp4" type="video/mp4">
@@ -218,6 +232,16 @@
         </a>
       </div>
     </div>
+
+    <!-- WCAG 2.2.2: motion that starts automatically and runs for more than
+         five seconds needs a way to stop it. The loop also honours
+         prefers-reduced-motion, but that alone does not cover someone who has
+         not set that preference. Hidden when the video is not shown. -->
+    <button class="hero__motion" id="hero-motion" type="button" hidden
+            aria-pressed="false" aria-label="Pause the background video">
+      <svg class="hero__motion-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.6" height="14" rx="1"/><rect x="13.4" y="5" width="3.6" height="14" rx="1"/></svg>
+      <svg class="hero__motion-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z"/></svg>
+    </button>
 
     <!-- trust strip: only claims the client actually makes -->
     <div class="trust">
@@ -262,10 +286,10 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-driveway-480.avif 480w, assets/img/svc-driveway-760.avif 760w, assets/img/svc-driveway-1100.avif 1100w">
+                    srcset="assets/img/svc-driveway-360.avif 360w, assets/img/svc-driveway-560.avif 560w, assets/img/svc-driveway-800.avif 800w, assets/img/svc-driveway-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-driveway-480.webp 480w, assets/img/svc-driveway-760.webp 760w, assets/img/svc-driveway-1100.webp 1100w">
-            <img src="assets/img/svc-driveway-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-driveway-360.webp 360w, assets/img/svc-driveway-560.webp 560w, assets/img/svc-driveway-800.webp 800w, assets/img/svc-driveway-1100.webp 1100w">
+            <img src="assets/img/svc-driveway-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="A concrete driveway mid-wash, with a sharp line between the dirty grey half and the clean pale half.">
           </picture>
         </span>
@@ -279,10 +303,10 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 48vw, 100vw"
-                    srcset="assets/img/svc-siding-480.avif 480w, assets/img/svc-siding-760.avif 760w, assets/img/svc-siding-1100.avif 1100w">
+                    srcset="assets/img/svc-siding-360.avif 360w, assets/img/svc-siding-560.avif 560w, assets/img/svc-siding-800.avif 800w, assets/img/svc-siding-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 48vw, 100vw"
-                    srcset="assets/img/svc-siding-480.webp 480w, assets/img/svc-siding-760.webp 760w, assets/img/svc-siding-1100.webp 1100w">
-            <img src="assets/img/svc-siding-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-siding-360.webp 360w, assets/img/svc-siding-560.webp 560w, assets/img/svc-siding-800.webp 800w, assets/img/svc-siding-1100.webp 1100w">
+            <img src="assets/img/svc-siding-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="House siding and white soffit being washed, mildew streaks giving way to clean panels.">
           </picture>
         </span>
@@ -296,10 +320,10 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 48vw, 100vw"
-                    srcset="assets/img/svc-pavers-480.avif 480w, assets/img/svc-pavers-760.avif 760w, assets/img/svc-pavers-1100.avif 1100w">
+                    srcset="assets/img/svc-pavers-360.avif 360w, assets/img/svc-pavers-560.avif 560w, assets/img/svc-pavers-800.avif 800w, assets/img/svc-pavers-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 48vw, 100vw"
-                    srcset="assets/img/svc-pavers-480.webp 480w, assets/img/svc-pavers-760.webp 760w, assets/img/svc-pavers-1100.webp 1100w">
-            <img src="assets/img/svc-pavers-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-pavers-360.webp 360w, assets/img/svc-pavers-560.webp 560w, assets/img/svc-pavers-800.webp 800w, assets/img/svc-pavers-1100.webp 1100w">
+            <img src="assets/img/svc-pavers-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="A paver patio half cleaned, showing the original stone colour against algae-darkened stone.">
           </picture>
         </span>
@@ -313,10 +337,10 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-commercial-480.avif 480w, assets/img/svc-commercial-760.avif 760w, assets/img/svc-commercial-1100.avif 1100w">
+                    srcset="assets/img/svc-commercial-360.avif 360w, assets/img/svc-commercial-560.avif 560w, assets/img/svc-commercial-800.avif 800w, assets/img/svc-commercial-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-commercial-480.webp 480w, assets/img/svc-commercial-760.webp 760w, assets/img/svc-commercial-1100.webp 1100w">
-            <img src="assets/img/svc-commercial-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-commercial-360.webp 360w, assets/img/svc-commercial-560.webp 560w, assets/img/svc-commercial-800.webp 800w, assets/img/svc-commercial-1100.webp 1100w">
+            <img src="assets/img/svc-commercial-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="A commercial storefront and walkway being pressure washed early in the morning.">
           </picture>
         </span>
@@ -330,10 +354,10 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-stairs-480.avif 480w, assets/img/svc-stairs-760.avif 760w, assets/img/svc-stairs-1100.avif 1100w">
+                    srcset="assets/img/svc-stairs-360.avif 360w, assets/img/svc-stairs-560.avif 560w, assets/img/svc-stairs-800.avif 800w, assets/img/svc-stairs-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-stairs-480.webp 480w, assets/img/svc-stairs-760.webp 760w, assets/img/svc-stairs-1100.webp 1100w">
-            <img src="assets/img/svc-stairs-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-stairs-360.webp 360w, assets/img/svc-stairs-560.webp 560w, assets/img/svc-stairs-800.webp 800w, assets/img/svc-stairs-1100.webp 1100w">
+            <img src="assets/img/svc-stairs-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="Concrete entry steps and a walkway being washed, clean concrete emerging below the handrail.">
           </picture>
         </span>
@@ -347,17 +371,17 @@
         <span class="service__media">
           <picture>
             <source type="image/avif" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-lot-480.avif 480w, assets/img/svc-lot-760.avif 760w, assets/img/svc-lot-1100.avif 1100w">
+                    srcset="assets/img/svc-lot-360.avif 360w, assets/img/svc-lot-560.avif 560w, assets/img/svc-lot-800.avif 800w, assets/img/svc-lot-1100.avif 1100w">
             <source type="image/webp" sizes="(min-width: 48rem) 42vw, 100vw"
-                    srcset="assets/img/svc-lot-480.webp 480w, assets/img/svc-lot-760.webp 760w, assets/img/svc-lot-1100.webp 1100w">
-            <img src="assets/img/svc-lot-760.webp" width="1100" height="733" loading="lazy" decoding="async"
+                    srcset="assets/img/svc-lot-360.webp 360w, assets/img/svc-lot-560.webp 560w, assets/img/svc-lot-800.webp 800w, assets/img/svc-lot-1100.webp 1100w">
+            <img src="assets/img/svc-lot-560.webp" width="1100" height="733" loading="lazy" decoding="async"
                  alt="An empty commercial parking lot being washed, bright white stall lines against clean asphalt.">
           </picture>
         </span>
         <p class="service__meta">06</p>
         <h3 class="service__title">Parking lots</h3>
         <p class="service__desc">Large lots washed end to end, so the first thing customers see
-          is not last year's grime.</p>
+          is not last year’s grime.</p>
       </article>
 
     </div>
@@ -637,7 +661,7 @@
          The text below is placeholder copy, NOT a real review. Nothing here
          is attributed to a real person and there are deliberately no star
          ratings, review counts or aggregate scores anywhere on this site,
-         because inventing them is both dishonest and against Google's
+         because inventing them is both dishonest and against Google’s
          structured-data rules.
 
          When you have real reviews, for each one replace:
@@ -652,7 +676,7 @@
     <div class="quotes">
       <figure class="quote quote--placeholder reveal">
         <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer's own words about
+        <blockquote>Placeholder review. Replace this with a real customer’s own words about
           the job Clear View did for them.</blockquote>
         <figcaption class="quote__cite">
           <span class="quote__name">Customer name</span>
@@ -662,7 +686,7 @@
 
       <figure class="quote quote--placeholder reveal">
         <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer's own words about
+        <blockquote>Placeholder review. Replace this with a real customer’s own words about
           the job Clear View did for them.</blockquote>
         <figcaption class="quote__cite">
           <span class="quote__name">Customer name</span>
@@ -672,7 +696,7 @@
 
       <figure class="quote quote--placeholder reveal">
         <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer's own words about
+        <blockquote>Placeholder review. Replace this with a real customer’s own words about
           the job Clear View did for them.</blockquote>
         <figcaption class="quote__cite">
           <span class="quote__name">Customer name</span>
@@ -778,7 +802,7 @@
     <div class="footer__grid">
 
       <div>
-        <a class="brand" href="#top" aria-label="Clear View Pressure Washing and Auto Detail, back to top">
+        <a class="brand" href="#top">
           <svg class="brand__mark" aria-hidden="true" focusable="false"><use href="#cv-mark"></use></svg>
           <span>
             <span class="brand__name">Clear View</span>

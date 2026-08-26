@@ -38,12 +38,12 @@ const IMAGES = [
   { src: 'raw-01-hero.png', out: 'hero-poster', ar: [16, 9], widths: [960, 1440, 1920], avif: { quality: 58, effort: 6 } },
 
   // service tiles - one fixed 3:2 frame, size varied by CSS not by crop
-  { src: 'raw-02-driveway.png', out: 'svc-driveway', ar: [3, 2], widths: [480, 760, 1100] },
-  { src: 'raw-03-siding.png', out: 'svc-siding', ar: [3, 2], widths: [480, 760, 1100] },
-  { src: 'raw-04-pavers.png', out: 'svc-pavers', ar: [3, 2], widths: [480, 760, 1100] },
-  { src: 'raw-05-commercial.png', out: 'svc-commercial', ar: [3, 2], widths: [480, 760, 1100] },
-  { src: 'raw-10-stairs.png', out: 'svc-stairs', ar: [3, 2], widths: [480, 760, 1100] },
-  { src: 'raw-11-lot.png', out: 'svc-lot', ar: [3, 2], widths: [480, 760, 1100] },
+  { src: 'raw-02-driveway.png', out: 'svc-driveway', ar: [3, 2], widths: [360, 560, 800, 1100] },
+  { src: 'raw-03-siding.png', out: 'svc-siding', ar: [3, 2], widths: [360, 560, 800, 1100] },
+  { src: 'raw-04-pavers.png', out: 'svc-pavers', ar: [3, 2], widths: [360, 560, 800, 1100] },
+  { src: 'raw-05-commercial.png', out: 'svc-commercial', ar: [3, 2], widths: [360, 560, 800, 1100] },
+  { src: 'raw-10-stairs.png', out: 'svc-stairs', ar: [3, 2], widths: [360, 560, 800, 1100] },
+  { src: 'raw-11-lot.png', out: 'svc-lot', ar: [3, 2], widths: [360, 560, 800, 1100] },
 
   // auto detailing - layered crop frames
   { src: 'raw-06-auto.png', out: 'detail-main', ar: [16, 9], widths: [640, 1000, 1400] },
@@ -53,8 +53,11 @@ const IMAGES = [
   { src: 'raw-08-ba-before.png', out: 'ba-before', ar: [3, 2], widths: [760, 1200, 1700] },
   { src: 'raw-09-ba-after.png', out: 'ba-after', ar: [3, 2], widths: [760, 1200, 1700] },
 
-  // low-contrast background texture
-  { src: 'raw-07-texture.png', out: 'texture-water', ar: [1, 1], widths: [900] },
+  // Low-contrast background texture. It renders at 10% opacity behind the
+  // service-area section, so it can be tiny and heavily compressed - at 900px
+  // it was a 51 KB download for something almost invisible.
+  { src: 'raw-07-texture.png', out: 'texture-water', ar: [3, 2], widths: [520],
+    avif: { quality: 34, effort: 6 }, webp: { quality: 46, effort: 5 } },
 ];
 
 async function buildImages() {
