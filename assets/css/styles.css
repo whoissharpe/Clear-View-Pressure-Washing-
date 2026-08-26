@@ -430,7 +430,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   display: flex;
   align-items: flex-end;
   min-height: 100svh;
-  padding-top: 8rem;
+  padding-top: 6rem;
   padding-bottom: 0;
   overflow: hidden;
   background: var(--cv-navy);
@@ -454,6 +454,23 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 .hero__video.is-ready { opacity: 1; }
 
+/* The drift baked into the clip is deliberately tiny, which read as "no
+   motion at all" on a large screen. This adds a slow continuous push-in on
+   top of it. transform only, so it stays on the compositor; it starts above
+   1 so the translate never exposes an edge. Paused by the hero control and
+   removed entirely under prefers-reduced-motion. */
+@keyframes cv-hero-drift {
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to   { transform: scale(1.16) translate3d(-2%, -1.4%, 0); }
+}
+.hero__poster,
+.hero__video {
+  animation: cv-hero-drift 24s cubic-bezier(.45, 0, .55, 1) infinite alternate;
+  will-change: transform;
+}
+.hero.is-paused .hero__poster,
+.hero.is-paused .hero__video { animation-play-state: paused; }
+
 /* Legibility scrim. It is the LAST child of .hero__bg and must NOT carry a
    negative z-index: the poster and video are positioned with z-index:auto, so
    a negative value paints the scrim behind them and it stops working entirely.
@@ -473,7 +490,35 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 
 .hero__inner { position: relative; width: 100%; }
-.hero__copy { max-width: 40rem; padding-bottom: var(--cv-space-8); }
+
+/* brand lockup: mark over wordmark over tagline */
+.hero__lockup { margin-bottom: var(--cv-space-5); }
+.hero__lockup-mark {
+  width: clamp(6.5rem, 13vw, 10.5rem);
+  height: auto;
+  aspect-ratio: 100 / 44.87;
+  color: var(--cv-accent);
+  filter: drop-shadow(0 6px 24px rgba(10, 22, 38, .55));
+}
+.hero__lockup-name {
+  margin-top: var(--cv-space-3);
+  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  font-weight: var(--cv-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0,0,0,.5);
+}
+.hero__lockup-tag {
+  margin-top: var(--cv-space-2);
+  font-size: var(--cv-text-micro);
+  font-weight: var(--cv-weight-semi);
+  letter-spacing: var(--cv-tracking-label);
+  text-transform: uppercase;
+  color: var(--cv-bone-muted);
+  text-shadow: 0 2px 10px rgba(0,0,0,.6);
+}
+.hero__copy { max-width: 40rem; padding-bottom: var(--cv-space-4); }
 
 .hero h1 {
   color: #fff;
@@ -481,7 +526,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 .hero__lede {
   max-width: 34rem;
-  margin-top: var(--cv-space-5);
+  margin-top: var(--cv-space-4);
   font-size: var(--cv-text-lg);
   color: var(--cv-bone);
   text-shadow: 0 2px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.7);
@@ -516,7 +561,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   display: flex;
   flex-wrap: wrap;
   gap: var(--cv-space-3);
-  margin-top: var(--cv-space-6);
+  margin-top: var(--cv-space-5);
 }
 
 @media (max-width: 47.99rem) {
@@ -539,7 +584,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--cv-space-3) var(--cv-space-5);
-  padding-block: var(--cv-space-5);
+  padding-block: var(--cv-space-4);
 }
 .trust__item {
   display: flex;
@@ -1051,6 +1096,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   /* the poster <img> is already in the markup, so removing the video is all
      that is needed - no background-image fallback to keep in sync */
   .hero__video { display: none; }
+  .hero__poster, .hero__video { animation: none; transform: none; }
 
   .reveal { opacity: 1; transform: none; transition: none; }
 

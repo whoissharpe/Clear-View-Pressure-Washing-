@@ -126,10 +126,13 @@
     var motionBtn = document.getElementById('hero-motion');
     if (motionBtn) {
       motionBtn.hidden = false;
+      var heroSection = document.querySelector('.hero');
       motionBtn.addEventListener('click', function () {
         var paused = hero.paused;
         if (paused) hero.play();
         else hero.pause();
+        // the CSS push-in is separate from playback, so stop it too
+        heroSection.classList.toggle('is-paused', !paused);
         motionBtn.setAttribute('aria-pressed', paused ? 'false' : 'true');
         motionBtn.setAttribute('aria-label',
           paused ? 'Pause the background video' : 'Play the background video');

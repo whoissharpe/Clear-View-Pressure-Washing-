@@ -219,6 +219,16 @@
 
   <div class="wrap hero__inner">
     <div class="hero__copy">
+      <!-- Brand lockup as the hero's lead element. The mark comes from the
+           shared sprite and the wordmark is real HTML text, so it stays crisp,
+           searchable and correctly set in Geist (an <img> of the SVG could not
+           load the webfont and would fall back to a system face). -->
+      <div class="hero__lockup">
+        <svg class="hero__lockup-mark" aria-hidden="true" focusable="false"><use href="#cv-mark"></use></svg>
+        <p class="hero__lockup-name">Clear View</p>
+        <p class="hero__lockup-tag">Pressure Washing &amp; Auto Detail</p>
+      </div>
+
       <p class="eyebrow">Jacksonville, Florida &middot; Since 2009</p>
       <h1>Make it look new again.</h1>
       <p class="hero__lede">Pressure washing and auto detailing across Jacksonville and the
