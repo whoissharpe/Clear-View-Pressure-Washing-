@@ -491,10 +491,28 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 
 .hero__inner { position: relative; width: 100%; }
 
+/* Hero layout: copy on the left, brand lockup on the right over the open
+   part of the photograph. Stacks brand-first on narrow screens. */
+.hero__main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--cv-space-5);
+}
+@media (min-width: 62rem) {
+  .hero__main {
+    grid-template-columns: minmax(0, 36rem) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+  .hero__copy   { grid-column: 1; grid-row: 1; }
+  .hero__lockup { grid-column: 2; grid-row: 1; justify-self: center; text-align: center; }
+  .hero__lockup-mark { margin-inline: auto; }
+}
+
 /* brand lockup: mark over wordmark over tagline */
-.hero__lockup { margin-bottom: var(--cv-space-5); }
+.hero__lockup { margin-bottom: 0; }
 .hero__lockup-mark {
-  width: clamp(6.5rem, 13vw, 10.5rem);
+  width: clamp(6.5rem, 15vw, 15rem);
   height: auto;
   aspect-ratio: 100 / 44.87;
   color: var(--cv-accent);
@@ -502,7 +520,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 .hero__lockup-name {
   margin-top: var(--cv-space-3);
-  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  font-size: clamp(1.5rem, 3.1vw, 2.875rem);
   font-weight: var(--cv-weight-bold);
   letter-spacing: -0.02em;
   line-height: 1;
