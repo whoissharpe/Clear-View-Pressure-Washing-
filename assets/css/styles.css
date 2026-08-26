@@ -677,6 +677,12 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #dde5ed;
+  /* JS now drives the divider from pointer position (see site.js), so this
+     box owns the whole drag gesture rather than fighting the browser's
+     default touch scrolling once a drag has started inside it. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .service__media img {
   width: 100%;
@@ -836,6 +842,12 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #dde5ed;
+  /* JS now drives the divider from pointer position (see site.js), so this
+     box owns the whole drag gesture rather than fighting the browser's
+     default touch scrolling once a drag has started inside it. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .ba__layer { position: absolute; inset: 0; }
 .ba__layer img { width: 100%; height: 100%; object-fit: cover; }
@@ -886,9 +898,11 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   appearance: none;
   -webkit-appearance: none;
   cursor: ew-resize;
-  /* pan-y lets a vertical swipe still scroll the page, while horizontal drags
-     are handed to the slider instead of being eaten by the scroller. */
-  touch-action: pan-y;
+  /* Dragging is driven by the pointer handlers on the .ba container (JS),
+     not by native range-thumb dragging, so this input's own touch-action
+     no longer matters for the drag itself - kept as none so a stray touch
+     here can't trigger a native scroll blip before JS takes over. */
+  touch-action: none;
 }
 .ba__range::-webkit-slider-runnable-track { background: transparent; height: 100%; }
 .ba__range::-moz-range-track { background: transparent; height: 100%; }

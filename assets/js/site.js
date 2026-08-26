@@ -148,8 +148,14 @@
 
   /* ----------------------------------------------------------------------
      Before / after slider
-     The range input is the control surface, so pointer, touch and keyboard
-     all work natively. This only mirrors its value onto a custom property.
+     Keyboard (arrow keys) drives the native range input directly, which
+     still works fine. But a native <input type="range"> only starts a drag
+     when the touch begins exactly on its rendered thumb - not anywhere on
+     the track - so on a photo this size, most taps and drags on mobile land
+     on "empty" track and do nothing. Pointer Events unify mouse/touch/pen,
+     so we compute the position from the pointer's X coordinate ourselves and
+     drive the input from that, letting a tap or drag ANYWHERE on the photo
+     move the divider.
      ---------------------------------------------------------------------- */
   var ba = document.getElementById('ba');
   var baRange = document.getElementById('ba-range');
@@ -157,6 +163,28 @@
     var sync = function () { ba.style.setProperty('--pos', baRange.value + '%'); };
     baRange.addEventListener('input', sync);
     sync();
+
+    var dragging = false;
+    var setFromClientX = function (clientX) {
+      var rect = ba.getBoundingClientRect();
+      var pct = ((clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      baRange.value = String(pct);
+      sync();
+    };
+
+    ba.addEventListener('pointerdown', function (e) {
+      dragging = true;
+      if (ba.setPointerCapture) ba.setPointerCapture(e.pointerId);
+      setFromClientX(e.clientX);
+    });
+    ba.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      setFromClientX(e.clientX);
+    });
+    var stopDrag = function () { dragging = false; };
+    ba.addEventListener('pointerup', stopDrag);
+    ba.addEventListener('pointercancel', stopDrag);
   }
 
   /* ----------------------------------------------------------------------
