@@ -34,8 +34,14 @@ const WEBP = { quality: 74, effort: 5 };
 /* image manifest                                                             */
 /* -------------------------------------------------------------------------- */
 const IMAGES = [
-  // hero poster - the LCP element. Widest range, highest quality.
-  { src: 'raw-01-hero.png', out: 'hero-poster', ar: [16, 9], widths: [960, 1440, 1920], avif: { quality: 58, effort: 6 } },
+  // Hero posters - the LCP element. Two of them:
+  //  hero-poster        first frame of the loop (dirty drive), what the video
+  //                     fades in from, so poster and video agree.
+  //  hero-poster-washed final frame (the mark washed in). Served instead when
+  //                     the visitor asks for reduced motion and never sees the
+  //                     reveal happen.
+  { src: 'hero2-start.png', out: 'hero-poster', ar: [16, 9], widths: [960, 1440, 1920], avif: { quality: 58, effort: 6 } },
+  { src: 'hero2-end.png', out: 'hero-poster-washed', ar: [16, 9], widths: [960, 1440, 1920], avif: { quality: 58, effort: 6 } },
 
   // service tiles - one fixed 3:2 frame, size varied by CSS not by crop
   { src: 'raw-02-driveway.png', out: 'svc-driveway', ar: [3, 2], widths: [360, 560, 800, 1100] },
@@ -154,7 +160,7 @@ const RENDITIONS = [
 
 async function buildVideo() {
   await mkdir(VID, { recursive: true });
-  const src = SRC + '/hero-src.mp4';
+  const src = SRC + '/wash-src.mp4';
 
   for (const r of RENDITIONS) {
     const scale = 'scale=' + r.w + ':' + r.h +

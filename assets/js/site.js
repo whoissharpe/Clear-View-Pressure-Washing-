@@ -104,8 +104,12 @@
      browsers that decline to start it with preload="none". Under
      prefers-reduced-motion the element is display:none and we never touch it.
      ---------------------------------------------------------------------- */
+  // Phones get the static washed-in frame instead of the reveal, so the clip
+  // is never fetched there - see the matching media query in styles.css.
+  var heroIsStill = window.matchMedia('(max-width: 47.99rem)').matches;
+
   var hero = document.querySelector('.hero__video');
-  if (hero && !reduceMotion) {
+  if (hero && !reduceMotion && !heroIsStill) {
     // Only reveal the video once it can actually play, so the hero never
     // flashes an empty box over the poster.
     var reveal = function () { hero.classList.add('is-ready'); };
@@ -128,6 +132,8 @@
       motionBtn.hidden = false;
       var heroSection = document.querySelector('.hero');
       motionBtn.addEventListener('click', function () {
+        // once the reveal has finished the video sits at its end; replay it
+        if (hero.ended) hero.currentTime = 0;
         var paused = hero.paused;
         if (paused) hero.play();
         else hero.pause();

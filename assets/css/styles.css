@@ -447,10 +447,10 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Bias the crop toward the wand and the spray rather than the centre of
-     the frame, so the actual pressure washing stays visible between the copy
-     and the lockup instead of being cropped off the right edge. */
-  object-position: 64% 58%;
+  /* Bias the crop down the frame so the driveway - and the mark washed into
+     it - stays in view, rather than centring on the house and cropping the
+     reveal off the bottom. */
+  object-position: 50% 74%;
 }
 .hero__video {
   opacity: 0;
@@ -464,8 +464,8 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
    1 so the translate never exposes an edge. Paused by the hero control and
    removed entirely under prefers-reduced-motion. */
 @keyframes cv-hero-drift {
-  from { transform: scale(1.04) translate3d(0, 0, 0); }
-  to   { transform: scale(1.12) translate3d(-1.1%, -0.7%, 0); }
+  from { transform: scale(1.03) translate3d(0, 0, 0); }
+  to   { transform: scale(1.09) translate3d(-0.8%, -0.5%, 0); }
 }
 .hero__poster,
 .hero__video {
@@ -485,12 +485,12 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   inset: 0;
   background:
     linear-gradient(90deg,
-      rgba(10,22,38,.95) 0%, rgba(10,22,38,.86) 32%,
-      rgba(10,22,38,.55) 62%, rgba(10,22,38,.38) 100%),
+      rgba(10,22,38,.94) 0%, rgba(10,22,38,.80) 28%,
+      rgba(10,22,38,.34) 56%, rgba(10,22,38,.16) 100%),
     linear-gradient(180deg,
-      rgba(10,22,38,.86) 0%, rgba(10,22,38,.52) 12%,
-      rgba(10,22,38,.20) 30%, rgba(10,22,38,.34) 62%,
-      rgba(10,22,38,.90) 100%);
+      rgba(10,22,38,.84) 0%, rgba(10,22,38,.44) 11%,
+      rgba(10,22,38,.10) 32%, rgba(10,22,38,.20) 68%,
+      rgba(10,22,38,.86) 100%);
 }
 
 /* Column layout so the copy can sit high in the frame while the lockup drops
@@ -516,13 +516,14 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
     align-items: stretch;
     gap: clamp(2rem, 6vw, 5rem);
   }
-  .hero__copy   { grid-column: 1; grid-row: 1; align-self: start; }
-  .hero__lockup {
-    grid-column: 2; grid-row: 1;
-    justify-self: center;
-    align-self: end;          /* rests on the trust strip */
-    text-align: center;
-  }
+  .hero__main { grid-template-columns: minmax(0, 36rem) minmax(0, 1fr); }
+  .hero__copy { grid-column: 1; grid-row: 1; align-self: center; }
+
+  /* On desktop the mark is washed into the driveway by the hero clip itself,
+     so a second static lockup here would sit on top of it and undercut the
+     reveal. The header and footer still carry the brand. It stays on narrow
+     screens, where the video crop loses the driveway mark. */
+  .hero__lockup { display: none; }
   .hero__lockup-mark { margin-inline: auto; }
 }
 
@@ -554,7 +555,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   text-shadow: 0 2px 10px rgba(0,0,0,.6);
 }
 .hero__copy { max-width: 40rem; padding-bottom: var(--cv-space-4); }
-@media (min-width: 62rem) { .hero__copy { padding-top: var(--cv-space-5); } }
+
 
 /* The hero display type is not meant to be selected; without this a click
    drops a blinking caret into it and the pointer turns into an I-beam. */
@@ -612,6 +613,15 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   flex-wrap: wrap;
   gap: var(--cv-space-3);
   margin-top: var(--cv-space-5);
+}
+
+/* On phones the hero is a still: the reveal is hard to read at that size and
+   it is not worth the bandwidth on mobile data. The <picture> serves the
+   finished washed-in frame instead, and the pause control has nothing to
+   control, so it goes too. */
+@media (max-width: 47.99rem) {
+  .hero__video,
+  .hero__motion { display: none; }
 }
 
 @media (max-width: 47.99rem) {
@@ -826,7 +836,6 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #dde5ed;
-  touch-action: pan-y;   /* let the page scroll vertically over the slider */
 }
 .ba__layer { position: absolute; inset: 0; }
 .ba__layer img { width: 100%; height: 100%; object-fit: cover; }
@@ -877,6 +886,9 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   appearance: none;
   -webkit-appearance: none;
   cursor: ew-resize;
+  /* pan-y lets a vertical swipe still scroll the page, while horizontal drags
+     are handed to the slider instead of being eaten by the scroller. */
+  touch-action: pan-y;
 }
 .ba__range::-webkit-slider-runnable-track { background: transparent; height: 100%; }
 .ba__range::-moz-range-track { background: transparent; height: 100%; }
@@ -899,7 +911,7 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
 }
 .ba__range:focus-visible { outline-offset: -4px; }
 
-.ba__hint { margin-top: var(--cv-space-4); font-size: var(--cv-text-sm); color: var(--cv-ink-muted); }
+.ba__hint { margin-top: var(--cv-space-4); font-size: var(--cv-text-sm); color: var(--cv-bone-muted); }
 
 /* -- 14. SERVICE AREA ------------------------------------------------------ */
 .area {
@@ -913,17 +925,18 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   inset: 0;
   z-index: -1;
   background: image-set(url("../img/texture-water-520.avif") type("image/avif"), url("../img/texture-water-520.webp") type("image/webp")) center / cover no-repeat;
-  opacity: .10;
-  mix-blend-mode: screen;
+  /* multiply, not screen: this section sits on paper now, not navy */
+  opacity: .07;
+  mix-blend-mode: multiply;
   pointer-events: none;
 }
 .area__grid { display: grid; grid-template-columns: 1fr; gap: var(--cv-space-7); }
 .area__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--cv-space-6); }
 .area__list li {
   padding-block: var(--cv-space-3);
-  border-bottom: 1px solid var(--cv-line-dark);
+  border-bottom: 1px solid var(--cv-line-light);
   font-size: var(--cv-text-sm);
-  color: var(--cv-bone);
+  color: var(--cv-ink);
 }
 @media (min-width: 56rem) {
   .area__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--cv-space-9); }

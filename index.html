@@ -195,6 +195,18 @@
          Using poster="" instead downloaded the still twice (once for the
          preload, once for the video) and made the <video> the LCP. -->
     <picture>
+      <!-- Phones never play the reveal (see the media query in styles.css), and
+           neither does reduced motion, so both get the finished frame with the
+           mark already washed into the driveway. First matching source wins,
+           so these come before the default pair. -->
+      <source media="(max-width: 47.99rem)" type="image/avif" sizes="100vw"
+              srcset="assets/img/hero-poster-washed-960.avif 960w, assets/img/hero-poster-washed-1440.avif 1440w">
+      <source media="(max-width: 47.99rem)" type="image/webp" sizes="100vw"
+              srcset="assets/img/hero-poster-washed-960.webp 960w, assets/img/hero-poster-washed-1440.webp 1440w">
+      <source media="(prefers-reduced-motion: reduce)" type="image/avif" sizes="100vw"
+              srcset="assets/img/hero-poster-washed-960.avif 960w, assets/img/hero-poster-washed-1440.avif 1440w, assets/img/hero-poster-washed-1920.avif 1920w">
+      <source media="(prefers-reduced-motion: reduce)" type="image/webp" sizes="100vw"
+              srcset="assets/img/hero-poster-washed-960.webp 960w, assets/img/hero-poster-washed-1440.webp 1440w, assets/img/hero-poster-washed-1920.webp 1920w">
       <source type="image/avif" sizes="100vw"
               srcset="assets/img/hero-poster-960.avif 960w, assets/img/hero-poster-1440.avif 1440w, assets/img/hero-poster-1920.avif 1920w">
       <source type="image/webp" sizes="100vw"
@@ -203,14 +215,13 @@
            width="1920" height="1080" alt="" fetchpriority="high" decoding="async">
     </picture>
 
-    <!-- Muted, looping, playsinline. The drift is baked into the clip itself
-         rather than animated in CSS, so it costs nothing to run and cannot
-         jank. It fades in over the poster once it can actually play, and is
-         removed entirely under prefers-reduced-motion. -->
-    <video class="hero__video" autoplay muted loop playsinline preload="none"
+    <!-- The reveal: the driveway is washed and the Clear View mark is uncovered
+         in clean concrete. It plays ONCE and holds on the finished frame -
+         looping would snap the driveway back to filthy every few seconds. The
+         slow push-in in CSS carries the continuous motion from there.
+         Muted and playsinline; removed entirely under prefers-reduced-motion. -->
+    <video class="hero__video" autoplay muted playsinline preload="none"
            width="1280" height="720" tabindex="-1" aria-hidden="true">
-      <source media="(max-width: 47.99rem)" src="assets/video/hero-mobile.webm" type="video/webm">
-      <source media="(max-width: 47.99rem)" src="assets/video/hero-mobile.mp4" type="video/mp4">
       <source src="assets/video/hero-desktop.webm" type="video/webm">
       <source src="assets/video/hero-desktop.mp4" type="video/mp4">
     </video>
@@ -402,66 +413,60 @@
 </section>
 
 <!-- ======================================================================
-     3. AUTO DETAILING  (deliberately dark, so it reads as its own business)
+     3. BEFORE / AFTER
      ====================================================================== -->
-<section class="section section--dark detail" id="detailing">
-  <div class="wrap detail__grid">
-
-    <div class="reveal">
-      <p class="eyebrow eyebrow--ruled">The other half of the business</p>
-      <h2>Auto detailing, same standard.</h2>
-      <p class="lede">Clear View is not only exteriors. The same care that goes into a driveway
-        goes into a vehicle &mdash; washed, detailed and finished properly, inside and out.</p>
-
-      <!-- TODO (client): confirm exactly which detailing packages you offer and what
-           each one includes, then replace these four generic lines. Nothing here
-           claims a specific package, price or product brand on purpose. -->
-      <ul class="detail__list">
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.9 4.6L18.5 9l-4.6 1.9L12 15l-1.9-4.1L5.5 9l4.6-1.4L12 3Z"/><path d="M18 16.5 19 19l2.5 1-2.5 1-1 2.5-1-2.5L14.5 20l2.5-1 1-2.5Z"/></svg>
-          Exterior wash &amp; finish
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18"/><path d="M5 17V9l2-4h10l2 4v8"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
-          Interior cleaning
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3v5.8M12 15.2V21M3 12h5.8M15.2 12H21"/></svg>
-          Wheels &amp; tyres
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.4-3.1 8.3-7.5 9.5-4.4-1.2-7.5-5.1-7.5-9.5V6L12 3Z"/></svg>
-          Cars, trucks &amp; fleet
-        </li>
-      </ul>
-
-      <div class="detail__cta">
-        <a class="btn btn--ghost" href="#quote">Ask about detailing</a>
-      </div>
+<section class="section section--dark results" id="results">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow eyebrow--ruled">See the difference</p>
+      <h2>Before and after, on the same driveway.</h2>
+      <p class="lede">Drag the handle to wipe between the two.</p>
     </div>
 
-    <div class="detail__media reveal">
-      <div class="detail__media-main">
+    <!-- ================================================================
+         TODO (client): REPLACE THESE TWO DEMO PHOTOS WITH YOUR OWN WORK.
+         These are illustrative images, not photographs of a Clear View job.
+         Swap the files at:
+             assets/design/raw-08-ba-before.png   (the "before" shot)
+             assets/design/raw-09-ba-after.png    (the "after" shot)
+         then run `npm run assets` to regenerate every size automatically.
+         Both photos MUST be taken from the same spot with the same framing,
+         or the wipe will not line up. Update the two alt texts below too.
+         ================================================================ -->
+    <div class="ba reveal" id="ba" style="--pos:50%">
+      <div class="ba__layer ba__layer--after">
         <picture>
-          <source type="image/avif" sizes="(min-width: 56rem) 55vw, 100vw"
-                  srcset="assets/img/detail-main-640.avif 640w, assets/img/detail-main-1000.avif 1000w, assets/img/detail-main-1400.avif 1400w">
-          <source type="image/webp" sizes="(min-width: 56rem) 55vw, 100vw"
-                  srcset="assets/img/detail-main-640.webp 640w, assets/img/detail-main-1000.webp 1000w, assets/img/detail-main-1400.webp 1400w">
-          <img src="assets/img/detail-main-1000.webp" width="1400" height="788" loading="lazy" decoding="async"
-               alt="A freshly detailed dark blue car with a deep mirror finish reflecting overhead lights.">
+          <source type="image/avif" sizes="(min-width: 80rem) 1150px, 100vw"
+                  srcset="assets/img/ba-after-760.avif 760w, assets/img/ba-after-1200.avif 1200w, assets/img/ba-after-1700.avif 1700w">
+          <source type="image/webp" sizes="(min-width: 80rem) 1150px, 100vw"
+                  srcset="assets/img/ba-after-760.webp 760w, assets/img/ba-after-1200.webp 1200w, assets/img/ba-after-1700.webp 1700w">
+          <img src="assets/img/ba-after-1200.webp" width="1700" height="1133" loading="lazy" decoding="async"
+               alt="After: the same driveway washed clean, an even pale concrete surface across its full width.">
         </picture>
       </div>
-      <div class="detail__media-inset" aria-hidden="true">
+      <div class="ba__layer ba__layer--before">
         <picture>
-          <source type="image/avif" sizes="(min-width: 56rem) 23vw, 1px"
-                  srcset="assets/img/detail-inset-360.avif 360w, assets/img/detail-inset-640.avif 640w">
-          <source type="image/webp" sizes="(min-width: 56rem) 23vw, 1px"
-                  srcset="assets/img/detail-inset-360.webp 360w, assets/img/detail-inset-640.webp 640w">
-          <img src="assets/img/detail-inset-360.webp" width="640" height="480" loading="lazy" decoding="async" alt="">
+          <source type="image/avif" sizes="(min-width: 80rem) 1150px, 100vw"
+                  srcset="assets/img/ba-before-760.avif 760w, assets/img/ba-before-1200.avif 1200w, assets/img/ba-before-1700.avif 1700w">
+          <source type="image/webp" sizes="(min-width: 80rem) 1150px, 100vw"
+                  srcset="assets/img/ba-before-760.webp 760w, assets/img/ba-before-1200.webp 1200w, assets/img/ba-before-1700.webp 1700w">
+          <img src="assets/img/ba-before-1200.webp" width="1700" height="1133" loading="lazy" decoding="async"
+               alt="Before: a driveway covered in green algae and dark staining across the whole slab.">
         </picture>
       </div>
-    </div>
 
+      <span class="ba__label ba__label--before">Before</span>
+      <span class="ba__label ba__label--after">After</span>
+      <span class="ba__line"></span>
+
+      <!-- The range input is the whole control surface, which gives click, drag,
+           touch and arrow-key support with no custom pointer handling. -->
+      <input class="ba__range" id="ba-range" type="range" min="0" max="100" value="50" step="0.1"
+             aria-label="Reveal the before or after photo"
+             aria-describedby="ba-hint">
+    </div>
+    <p class="ba__hint" id="ba-hint">Illustrative example. Use the slider, or focus it and press
+      the left and right arrow keys.</p>
   </div>
 </section>
 
@@ -561,67 +566,73 @@
 </section>
 
 <!-- ======================================================================
-     6. BEFORE / AFTER
+     6. AUTO DETAILING  (deliberately dark, so it reads as its own business)
      ====================================================================== -->
-<section class="section results" id="results">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow eyebrow--ruled">See the difference</p>
-      <h2>Before and after, on the same driveway.</h2>
-      <p class="lede">Drag the handle to wipe between the two.</p>
+<section class="section section--dark detail" id="detailing">
+  <div class="wrap detail__grid">
+
+    <div class="reveal">
+      <p class="eyebrow eyebrow--ruled">The other half of the business</p>
+      <h2>Auto detailing, same standard.</h2>
+      <p class="lede">Clear View is not only exteriors. The same care that goes into a driveway
+        goes into a vehicle &mdash; washed, detailed and finished properly, inside and out.</p>
+
+      <!-- TODO (client): confirm exactly which detailing packages you offer and what
+           each one includes, then replace these four generic lines. Nothing here
+           claims a specific package, price or product brand on purpose. -->
+      <ul class="detail__list">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.9 4.6L18.5 9l-4.6 1.9L12 15l-1.9-4.1L5.5 9l4.6-1.4L12 3Z"/><path d="M18 16.5 19 19l2.5 1-2.5 1-1 2.5-1-2.5L14.5 20l2.5-1 1-2.5Z"/></svg>
+          Exterior wash &amp; finish
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17h18"/><path d="M5 17V9l2-4h10l2 4v8"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
+          Interior cleaning
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/><path d="M12 3v5.8M12 15.2V21M3 12h5.8M15.2 12H21"/></svg>
+          Wheels &amp; tyres
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.4-3.1 8.3-7.5 9.5-4.4-1.2-7.5-5.1-7.5-9.5V6L12 3Z"/></svg>
+          Cars, trucks &amp; fleet
+        </li>
+      </ul>
+
+      <div class="detail__cta">
+        <a class="btn btn--ghost" href="#quote">Ask about detailing</a>
+      </div>
     </div>
 
-    <!-- ================================================================
-         TODO (client): REPLACE THESE TWO DEMO PHOTOS WITH YOUR OWN WORK.
-         These are illustrative images, not photographs of a Clear View job.
-         Swap the files at:
-             assets/design/raw-08-ba-before.png   (the "before" shot)
-             assets/design/raw-09-ba-after.png    (the "after" shot)
-         then run `npm run assets` to regenerate every size automatically.
-         Both photos MUST be taken from the same spot with the same framing,
-         or the wipe will not line up. Update the two alt texts below too.
-         ================================================================ -->
-    <div class="ba reveal" id="ba" style="--pos:50%">
-      <div class="ba__layer ba__layer--after">
+    <div class="detail__media reveal">
+      <div class="detail__media-main">
         <picture>
-          <source type="image/avif" sizes="(min-width: 80rem) 1150px, 100vw"
-                  srcset="assets/img/ba-after-760.avif 760w, assets/img/ba-after-1200.avif 1200w, assets/img/ba-after-1700.avif 1700w">
-          <source type="image/webp" sizes="(min-width: 80rem) 1150px, 100vw"
-                  srcset="assets/img/ba-after-760.webp 760w, assets/img/ba-after-1200.webp 1200w, assets/img/ba-after-1700.webp 1700w">
-          <img src="assets/img/ba-after-1200.webp" width="1700" height="1133" loading="lazy" decoding="async"
-               alt="After: the same driveway washed clean, an even pale concrete surface across its full width.">
+          <source type="image/avif" sizes="(min-width: 56rem) 55vw, 100vw"
+                  srcset="assets/img/detail-main-640.avif 640w, assets/img/detail-main-1000.avif 1000w, assets/img/detail-main-1400.avif 1400w">
+          <source type="image/webp" sizes="(min-width: 56rem) 55vw, 100vw"
+                  srcset="assets/img/detail-main-640.webp 640w, assets/img/detail-main-1000.webp 1000w, assets/img/detail-main-1400.webp 1400w">
+          <img src="assets/img/detail-main-1000.webp" width="1400" height="788" loading="lazy" decoding="async"
+               alt="A freshly detailed dark blue car with a deep mirror finish reflecting overhead lights.">
         </picture>
       </div>
-      <div class="ba__layer ba__layer--before">
+      <div class="detail__media-inset" aria-hidden="true">
         <picture>
-          <source type="image/avif" sizes="(min-width: 80rem) 1150px, 100vw"
-                  srcset="assets/img/ba-before-760.avif 760w, assets/img/ba-before-1200.avif 1200w, assets/img/ba-before-1700.avif 1700w">
-          <source type="image/webp" sizes="(min-width: 80rem) 1150px, 100vw"
-                  srcset="assets/img/ba-before-760.webp 760w, assets/img/ba-before-1200.webp 1200w, assets/img/ba-before-1700.webp 1700w">
-          <img src="assets/img/ba-before-1200.webp" width="1700" height="1133" loading="lazy" decoding="async"
-               alt="Before: a driveway covered in green algae and dark staining across the whole slab.">
+          <source type="image/avif" sizes="(min-width: 56rem) 23vw, 1px"
+                  srcset="assets/img/detail-inset-360.avif 360w, assets/img/detail-inset-640.avif 640w">
+          <source type="image/webp" sizes="(min-width: 56rem) 23vw, 1px"
+                  srcset="assets/img/detail-inset-360.webp 360w, assets/img/detail-inset-640.webp 640w">
+          <img src="assets/img/detail-inset-360.webp" width="640" height="480" loading="lazy" decoding="async" alt="">
         </picture>
       </div>
-
-      <span class="ba__label ba__label--before">Before</span>
-      <span class="ba__label ba__label--after">After</span>
-      <span class="ba__line"></span>
-
-      <!-- The range input is the whole control surface, which gives click, drag,
-           touch and arrow-key support with no custom pointer handling. -->
-      <input class="ba__range" id="ba-range" type="range" min="0" max="100" value="50" step="0.1"
-             aria-label="Reveal the before or after photo"
-             aria-describedby="ba-hint">
     </div>
-    <p class="ba__hint" id="ba-hint">Illustrative example. Use the slider, or focus it and press
-      the left and right arrow keys.</p>
+
   </div>
 </section>
 
 <!-- ======================================================================
      7. SERVICE AREA
      ====================================================================== -->
-<section class="section section--dark area" id="area">
+<section class="section area" id="area">
   <span class="area__texture" aria-hidden="true"></span>
   <div class="wrap area__grid">
     <div class="reveal">
@@ -630,7 +641,7 @@
       <p class="lede">From the river to the beaches and every neighbourhood in between. If you
         are not sure whether you are in range, call and ask &mdash; the answer is usually yes.</p>
       <p style="margin-top:var(--cv-space-6)">
-        <a class="btn btn--ghost" href="tel:+19043121236">Call (904) 312-1236</a>
+        <a class="btn btn--ghost-light" href="tel:+19043121236">Call (904) 312-1236</a>
       </p>
     </div>
 
@@ -660,65 +671,11 @@
 </section>
 
 <!-- ======================================================================
-     8. TESTIMONIALS
+     TESTIMONIALS - removed for now at the client's request. The component and
+     its styles are still in the stylesheet (.quotes / .quote), so it can
+     be dropped back in once there are real reviews to show. See git history for
+     the original markup.
      ====================================================================== -->
-<section class="section testimonials" id="testimonials">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow eyebrow--ruled">In their words</p>
-      <h2>What customers say.</h2>
-    </div>
-
-    <!-- ================================================================
-         TODO (client): REPLACE ALL THREE QUOTES WITH REAL CUSTOMER REVIEWS.
-         The text below is placeholder copy, NOT a real review. Nothing here
-         is attributed to a real person and there are deliberately no star
-         ratings, review counts or aggregate scores anywhere on this site,
-         because inventing them is both dishonest and against Google’s
-         structured-data rules.
-
-         When you have real reviews, for each one replace:
-           - the <blockquote> text
-           - the customer name in .quote__name
-           - their neighbourhood in .quote__where
-           - remove the class "quote--placeholder"
-         If you want star ratings shown, they must come from a real review
-         platform, and a Review/AggregateRating block should then be added to
-         the JSON-LD in the <head>.
-         ================================================================ -->
-    <div class="quotes">
-      <figure class="quote quote--placeholder reveal">
-        <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer’s own words about
-          the job Clear View did for them.</blockquote>
-        <figcaption class="quote__cite">
-          <span class="quote__name">Customer name</span>
-          <span class="quote__where">Neighbourhood, Jacksonville</span>
-        </figcaption>
-      </figure>
-
-      <figure class="quote quote--placeholder reveal">
-        <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer’s own words about
-          the job Clear View did for them.</blockquote>
-        <figcaption class="quote__cite">
-          <span class="quote__name">Customer name</span>
-          <span class="quote__where">Neighbourhood, Jacksonville</span>
-        </figcaption>
-      </figure>
-
-      <figure class="quote quote--placeholder reveal">
-        <span class="quote__mark" aria-hidden="true">&ldquo;</span>
-        <blockquote>Placeholder review. Replace this with a real customer’s own words about
-          the job Clear View did for them.</blockquote>
-        <figcaption class="quote__cite">
-          <span class="quote__name">Customer name</span>
-          <span class="quote__where">Neighbourhood, Jacksonville</span>
-        </figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
 
 <!-- ======================================================================
      9. FINAL CTA + CONTACT
