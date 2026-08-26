@@ -7,3 +7,6 @@ dist/
 assets/design/check-*
 assets/design/comp-*
 assets/design/raw-*.png
+
+# Lighthouse report artefacts
+lh*.json
