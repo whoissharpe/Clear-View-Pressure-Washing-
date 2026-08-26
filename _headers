@@ -1,7 +1,10 @@
 # Cloudflare Pages headers
-
+#
+# Assets are NOT content-hashed (same filenames get overwritten on every
+# change), so they must revalidate rather than being cached "immutable" for a
+# year, or browsers/CDN keep serving stale bytes indefinitely after a deploy.
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=300, must-revalidate
 
 /*
   X-Content-Type-Options: nosniff
