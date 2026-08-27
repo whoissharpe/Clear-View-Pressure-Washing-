@@ -15,3 +15,10 @@ lh*.json
 # database_id). Copy wrangler.example.toml to wrangler.toml to run locally.
 .wrangler/
 wrangler.toml
+
+# Generated logo PNGs and their zip - regenerate with:
+#   python scripts/outline-lockup.py && node scripts/export-png.mjs
+logo-png/
+clearview-logos.zip
+assets/design/outlined-*.svg
+assets/design/geist.ttf
