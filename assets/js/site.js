@@ -149,13 +149,17 @@
   /* ----------------------------------------------------------------------
      Before / after slider
      Keyboard (arrow keys) drives the native range input directly, which
-     still works fine. But a native <input type="range"> only starts a drag
-     when the touch begins exactly on its rendered thumb - not anywhere on
-     the track - so on a photo this size, most taps and drags on mobile land
-     on "empty" track and do nothing. Pointer Events unify mouse/touch/pen,
-     so we compute the position from the pointer's X coordinate ourselves and
-     drive the input from that, letting a tap or drag ANYWHERE on the photo
-     move the divider.
+     still works fine. A native <input type="range"> only starts a drag when
+     the touch begins exactly on its rendered thumb, not anywhere on the
+     track - so on a photo this size, most taps/drags on mobile did nothing.
+
+     A first attempt drove this with Pointer Events + setPointerCapture, but
+     that API has real cross-browser gaps (particularly capturing on an
+     ancestor rather than the original touch target), and it did not fix the
+     problem on a real phone. This uses plain touchstart/touchmove/touchend
+     (the approach every production before/after-slider library actually
+     uses), with the range input made fully inert to touch/mouse so nothing
+     can compete with it for the gesture.
      ---------------------------------------------------------------------- */
   var ba = document.getElementById('ba');
   var baRange = document.getElementById('ba-range');
@@ -173,18 +177,32 @@
       sync();
     };
 
-    ba.addEventListener('pointerdown', function (e) {
+    // Touch: bound on document for move/end so the drag keeps tracking even
+    // if the finger slides outside the box, and preventDefault stops both
+    // page scroll and any native slider gesture from ever engaging.
+    ba.addEventListener('touchstart', function (e) {
       dragging = true;
-      if (ba.setPointerCapture) ba.setPointerCapture(e.pointerId);
+      setFromClientX(e.touches[0].clientX);
+      e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+      setFromClientX(e.touches[0].clientX);
+      e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchend', function () { dragging = false; });
+    document.addEventListener('touchcancel', function () { dragging = false; });
+
+    // Mouse: same drag-anywhere behaviour, for consistency with touch.
+    ba.addEventListener('mousedown', function (e) {
+      dragging = true;
       setFromClientX(e.clientX);
     });
-    ba.addEventListener('pointermove', function (e) {
+    document.addEventListener('mousemove', function (e) {
       if (!dragging) return;
       setFromClientX(e.clientX);
     });
-    var stopDrag = function () { dragging = false; };
-    ba.addEventListener('pointerup', stopDrag);
-    ba.addEventListener('pointercancel', stopDrag);
+    document.addEventListener('mouseup', function () { dragging = false; });
   }
 
   /* ----------------------------------------------------------------------

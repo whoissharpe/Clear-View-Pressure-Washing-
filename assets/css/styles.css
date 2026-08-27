@@ -38,6 +38,15 @@
 /* -- 2. RESET & BASE ------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* The `hidden` attribute must always win. A UA stylesheet gives [hidden] a
+   display:none, but ANY author rule that sets display beats it - and
+   .mobile-menu sets display:grid. That left an invisible, full-viewport,
+   pointer-events:auto overlay sitting at z-index 55 over the whole page on
+   mobile, swallowing every tap in <main> (the before/after slider, links,
+   form fields, hero CTAs). Only the header and call bar escaped it, because
+   they sit at z-index 60/70. */
+[hidden] { display: none !important; }
+
 html {
   /* light UI so native controls and autofill render correctly */
   color-scheme: light;
@@ -898,10 +907,13 @@ h3 { font-size: var(--cv-h3); letter-spacing: -0.01em; }
   appearance: none;
   -webkit-appearance: none;
   cursor: ew-resize;
-  /* Dragging is driven by the pointer handlers on the .ba container (JS),
-     not by native range-thumb dragging, so this input's own touch-action
-     no longer matters for the drag itself - kept as none so a stray touch
-     here can't trigger a native scroll blip before JS takes over. */
+  /* Fully inert to touch/mouse: dragging is driven entirely by the
+     touchstart/mousedown handlers on the .ba container (JS), so this input
+     must never receive a hit itself, or a native browser gesture could
+     start competing with ours for the same touch. Keyboard focus/arrow-key
+     operation is untouched - pointer-events only affects hit-testing, not
+     keyboard input. */
+  pointer-events: none;
   touch-action: none;
 }
 .ba__range::-webkit-slider-runnable-track { background: transparent; height: 100%; }
