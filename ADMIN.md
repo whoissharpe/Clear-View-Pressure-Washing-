@@ -13,11 +13,27 @@ and `https://<site>/admin` lists them behind a password.
 
 ---
 
-## One-time Cloudflare setup
+## Cloudflare setup — already done
 
-Everything above is code and deploys itself. The database is the one thing that
-has to be created in the account, because a D1 database is account state, not a
-file in the repo.
+The database exists, the table exists, the binding is attached to both the
+Production and Preview environments, and the deployment carrying it is live. It
+was verified in production: the site's own form was submitted, the lead appeared
+at `/admin`, and the test row was then deleted (the table is empty).
+
+| Thing | Value |
+| --- | --- |
+| D1 database | `clearview-leads` |
+| Database id | `4b086ac0-0c13-4e63-b112-f69715106b19` |
+| Binding variable | `DB` (Production **and** Preview) |
+
+Note that the **Functions only run on Cloudflare Pages.** The GitHub Pages copy
+of this site is static hosting with no server, so the form and `/admin` will not
+work there. Use the `.pages.dev` URL (or the custom domain once it points at
+Cloudflare).
+
+The steps below are recorded only in case the database ever has to be rebuilt.
+
+### Rebuilding from scratch
 
 **1. Create the database**
 
@@ -129,7 +145,7 @@ That serves the built site plus the Functions on <http://localhost:8788>, backed
 by a local SQLite file under `.wrangler/`. Nothing you submit locally reaches the
 live database.
 
-`wrangler.toml` is gitignored because it carries a real `database_id`.
+`wrangler.toml` is gitignored so local experiments never change what deploys.
 
 ---
 

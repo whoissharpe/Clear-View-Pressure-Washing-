@@ -2,9 +2,8 @@ name = "clear-view-pressure-washing"
 compatibility_date = "2026-08-01"
 pages_build_output_dir = "dist"
 
-# Lead storage. database_id is filled in by:
-#   npx wrangler d1 create clearview-leads
+# Copy this file to wrangler.toml to run `npm run dev` locally.
 [[d1_databases]]
 binding = "DB"
 database_name = "clearview-leads"
-database_id = "LOCAL-ONLY-REPLACE-ME"
+database_id = "4b086ac0-0c13-4e63-b112-f69715106b19"
