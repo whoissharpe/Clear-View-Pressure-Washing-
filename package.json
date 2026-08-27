@@ -6,7 +6,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "assets": "node scripts/optimize-assets.mjs",
-    "serve": "node scripts/serve.mjs"
+    "serve": "node scripts/serve.mjs",
+    "dev": "npm run build && npx wrangler pages dev",
+    "db:init": "npx wrangler d1 execute clearview-leads --remote --file=./schema.sql",
+    "db:init:local": "npx wrangler d1 execute clearview-leads --local --file=./schema.sql"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",

@@ -702,15 +702,15 @@
     </div>
 
     <!-- ================================================================
-         TODO (developer/client): CONNECT THIS FORM TO A REAL ENDPOINT.
-         Set data-endpoint below to wherever the lead should go. Options:
-           - a form service (Formspree, Basin, Web3Forms): paste its URL
-           - a Cloudflare Pages Function at /api/quote
-         Until data-endpoint has a value, the form validates normally and then
-         tells the visitor to call instead, so it never silently swallows a
-         lead. See assets/js/site.js for the submit handler.
+         Submissions post to /api/lead (functions/api/lead.js), which stores
+         them in D1. They are readable at /admin behind a password - see
+         ADMIN.md for the one-time Cloudflare binding this depends on.
+
+         If the endpoint ever fails or is unconfigured, the submit handler in
+         assets/js/site.js says so and gives the phone number. It never reports
+         a lead as sent when it was not.
          ================================================================ -->
-    <form class="form reveal" id="quote-form" data-endpoint="" novalidate>
+    <form class="form reveal" id="quote-form" data-endpoint="/api/lead" novalidate>
       <div class="field">
         <label class="field__label" for="f-name">Name <span class="field__req" aria-hidden="true">*</span></label>
         <input id="f-name" name="name" type="text" autocomplete="name" required

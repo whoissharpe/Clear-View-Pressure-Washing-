@@ -2,3 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://clearviewjax.com/sitemap.xml
+
+# The leads dashboard is password-gated server-side; this just keeps it out of
+# search results as well.
+Disallow: /admin

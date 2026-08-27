@@ -10,3 +10,8 @@ assets/design/raw-*.png
 
 # Lighthouse report artefacts
 lh*.json
+
+# Local Pages/D1 state, and the local wrangler config (it carries a real
+# database_id). Copy wrangler.example.toml to wrangler.toml to run locally.
+.wrangler/
+wrangler.toml

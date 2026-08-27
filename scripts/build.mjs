@@ -96,8 +96,23 @@ if (html.includes('src="assets/js/site.js"')) {
 
 await writeFile(path.join(OUT, 'index.html'), html);
 
+/* ---- admin page ----------------------------------------------------------
+   /admin is its own standalone document: it shares the design tokens with the
+   site but none of its layout CSS or JS, so it gets tokens.css inlined the same
+   way and nothing else. Cloudflare Pages serves admin.html at /admin. */
+let admin = await readFile('admin.html', 'utf8');
+admin = admin.replace(
+  '<link rel="stylesheet" href="assets/css/tokens.css">',
+  '<style>' + squeeze(tokens) + '</style>'
+);
+if (admin.includes('assets/css/')) {
+  throw new Error('admin.html stylesheet link was not replaced');
+}
+await writeFile(path.join(OUT, 'admin.html'), admin);
+
 const kb = (s) => (s / 1024).toFixed(1) + ' KB';
 console.log('built ' + OUT + '/');
 console.log('  index.html ' + kb(Buffer.byteLength(html)) + ' (css inlined, ' + kb(Buffer.byteLength(inlined)) + ' of it)');
 console.log('  assets/js/' + jsName + ' ' + kb(Buffer.byteLength(js)) + ' -> ' + kb(Buffer.byteLength(minJs)));
+console.log('  admin.html ' + kb(Buffer.byteLength(admin)));
 console.log('  copied: ' + COPY.join(', '));

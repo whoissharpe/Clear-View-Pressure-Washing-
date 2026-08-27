@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leads — Clear View</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<style>
+@font-face {
+  font-family: "Geist";
+  src: url("assets/fonts/geist-latin-var.woff2") format("woff2-variations"),
+       url("assets/fonts/geist-latin-var.woff2") format("woff2");
+  font-weight: 300 800; font-style: normal; font-display: swap;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100dvh;
+  background: var(--cv-navy); color: var(--cv-bone);
+  font-family: var(--cv-font); font-size: 16px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--cv-accent); }
+:focus-visible { outline: 3px solid var(--cv-accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.wrap { max-width: 64rem; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+
+.top { display: flex; flex-wrap: wrap; gap: 1rem; align-items: baseline;
+       justify-content: space-between; margin-bottom: 1.75rem; }
+.top h1 { margin: 0; font-size: 1.5rem; letter-spacing: -0.02em; }
+.top p { margin: .25rem 0 0; color: var(--cv-bone-muted); font-size: .875rem; }
+
+/* ---- password gate ---- */
+.gate { max-width: 22rem; margin: 12vh auto; }
+.gate h1 { font-size: 1.25rem; margin: 0 0 .25rem; letter-spacing: -0.02em; }
+.gate p { margin: 0 0 1.5rem; color: var(--cv-bone-muted); font-size: .875rem; }
+.gate button { width: 100%; margin-top: 1rem; }
+
+label { display: block; font-size: .8125rem; font-weight: 600;
+        letter-spacing: .04em; text-transform: uppercase;
+        color: var(--cv-bone-muted); margin-bottom: .5rem; }
+input[type="password"], input[type="search"] {
+  width: 100%; padding: .75rem .875rem; font: inherit;
+  color: var(--cv-bone); background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.18); border-radius: var(--cv-radius-md);
+}
+input::placeholder { color: var(--cv-bone-muted); }
+
+button {
+  font: inherit; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; border-radius: var(--cv-radius-md);
+  padding: .75rem 1.25rem; min-height: 44px;
+  background: var(--cv-accent); color: var(--cv-accent-ink);
+  transition: filter 160ms cubic-bezier(.32,.72,0,1),
+              transform 160ms cubic-bezier(.32,.72,0,1);
+}
+button:hover { filter: brightness(1.08); }
+button:active { transform: scale(.98); }
+button[disabled] { opacity: .55; cursor: default; transform: none; filter: none; }
+.btn-quiet {
+  background: transparent; color: var(--cv-bone);
+  border-color: rgba(255,255,255,.24); padding: .5rem .875rem; font-size: .875rem;
+}
+
+.msg { margin-top: 1rem; font-size: .875rem; min-height: 1.25rem; }
+.msg[data-state="error"] { color: #FFB4A8; }
+
+/* ---- list ---- */
+.tools { margin-bottom: 1.25rem; }
+
+.lead {
+  border: 1px solid rgba(255,255,255,.13); border-radius: var(--cv-radius-lg);
+  background: rgba(255,255,255,.04); padding: 1.25rem; margin-bottom: .875rem;
+}
+.lead.is-handled { opacity: .5; }
+.lead__head { display: flex; flex-wrap: wrap; gap: .25rem 1rem;
+              align-items: baseline; justify-content: space-between; }
+.lead__name { font-weight: 700; font-size: 1.0625rem; margin: 0;
+              letter-spacing: -0.01em; }
+.lead__when { color: var(--cv-bone-muted); font-size: .8125rem;
+              font-variant-numeric: tabular-nums; }
+.lead__meta { margin: .5rem 0 0; display: flex; flex-wrap: wrap;
+              gap: .25rem 1.25rem; font-size: .9375rem; }
+.lead__meta a { font-weight: 600; text-decoration: none; }
+.lead__meta a:hover { text-decoration: underline; }
+.lead__msg { margin: .875rem 0 0; white-space: pre-wrap;
+             border-left: 2px solid var(--cv-accent); padding-left: .875rem; }
+.lead__foot { margin-top: 1rem; }
+
+.empty { color: var(--cv-bone-muted); padding: 3rem 0; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+
+  <!-- Password gate. This is a convenience gate, not the security boundary: the
+       real check runs server-side in functions/api/leads.js, and no lead data is
+       ever sent to a client that has not passed it. -->
+  <form class="gate" id="gate">
+    <h1>Clear View leads</h1>
+    <p>Enter the password to view form submissions.</p>
+    <label for="pw">Password</label>
+    <input id="pw" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit">View leads</button>
+    <p class="msg" id="gate-msg" role="status" aria-live="polite"></p>
+  </form>
+
+  <section id="panel" hidden>
+    <div class="top">
+      <div>
+        <h1>Leads</h1>
+        <p id="count"></p>
+      </div>
+      <button type="button" class="btn-quiet" id="refresh">Refresh</button>
+    </div>
+
+    <div class="tools">
+      <label for="q">Search</label>
+      <input id="q" type="search" placeholder="Name, phone, address or message">
+    </div>
+
+    <div id="list"></div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var gate = document.getElementById('gate');
+  var gateMsg = document.getElementById('gate-msg');
+  var panel = document.getElementById('panel');
+  var list = document.getElementById('list');
+  var count = document.getElementById('count');
+  var q = document.getElementById('q');
+  var refresh = document.getElementById('refresh');
+
+  var password = '';
+  var leads = [];
+
+  /* sessionStorage, not localStorage: it lives for this tab only and is gone
+     when the tab closes, which matters on a shared or borrowed device. */
+  try { password = sessionStorage.getItem('cv-admin') || ''; } catch (e) {}
+
+  function api(extra) {
+    var body = { password: password };
+    for (var k in extra) body[k] = extra[k];
+    return fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) throw new Error(data.error || 'Request failed.');
+        return data;
+      });
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function when(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString(undefined, {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+  }
+
+  function render() {
+    var term = q.value.trim().toLowerCase();
+    var shown = !term ? leads : leads.filter(function (l) {
+      return (l.name + ' ' + l.phone + ' ' + l.address + ' ' + l.message)
+        .toLowerCase().indexOf(term) !== -1;
+    });
+
+    count.textContent = shown.length === leads.length
+      ? leads.length + (leads.length === 1 ? ' submission' : ' submissions')
+      : shown.length + ' of ' + leads.length + ' shown';
+
+    if (!shown.length) {
+      list.innerHTML = '<p class="empty">' +
+        (leads.length ? 'Nothing matches that search.' : 'No submissions yet.') +
+        '</p>';
+      return;
+    }
+
+    list.innerHTML = shown.map(function (l) {
+      var tel = String(l.phone).replace(/[^\d+]/g, '');
+      return '<article class="lead' + (l.handled ? ' is-handled' : '') + '">' +
+        '<div class="lead__head">' +
+          '<h2 class="lead__name">' + esc(l.name) + '</h2>' +
+          '<span class="lead__when">' + esc(when(l.created_at)) + '</span>' +
+        '</div>' +
+        '<p class="lead__meta">' +
+          '<a href="tel:' + esc(tel) + '">' + esc(l.phone) + '</a>' +
+          (l.address ? '<span>' + esc(l.address) + '</span>' : '') +
+          (l.service ? '<span>' + esc(l.service) + '</span>' : '') +
+        '</p>' +
+        '<p class="lead__msg">' + esc(l.message) + '</p>' +
+        '<div class="lead__foot">' +
+          '<button type="button" class="btn-quiet" data-id="' + l.id +
+            '" data-handled="' + (l.handled ? 1 : 0) + '">' +
+            (l.handled ? 'Mark as not handled' : 'Mark as handled') +
+          '</button>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  function load() {
+    return api({}).then(function (data) { leads = data.leads; render(); });
+  }
+
+  gate.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = gate.querySelector('button');
+    password = document.getElementById('pw').value;
+    btn.disabled = true;
+    gateMsg.removeAttribute('data-state');
+    gateMsg.textContent = 'Checking…';
+
+    load().then(function () {
+      try { sessionStorage.setItem('cv-admin', password); } catch (e) {}
+      gate.hidden = true;
+      panel.hidden = false;
+      q.focus();
+    }).catch(function (err) {
+      password = '';
+      gateMsg.setAttribute('data-state', 'error');
+      gateMsg.textContent = err.message;
+    }).finally(function () { btn.disabled = false; });
+  });
+
+  q.addEventListener('input', render);
+
+  refresh.addEventListener('click', function () {
+    refresh.disabled = true;
+    load().catch(function () {}).finally(function () { refresh.disabled = false; });
+  });
+
+  list.addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-id]');
+    if (!btn) return;
+    btn.disabled = true;
+    api({ action: 'handled', id: Number(btn.getAttribute('data-id')),
+          handled: btn.getAttribute('data-handled') !== '1' })
+      .then(function (data) { leads = data.leads; render(); })
+      .catch(function () { btn.disabled = false; });
+  });
+
+  // Already authenticated in this tab - skip the gate.
+  if (password) {
+    load().then(function () {
+      gate.hidden = true;
+      panel.hidden = false;
+    }).catch(function () {
+      password = '';
+      try { sessionStorage.removeItem('cv-admin'); } catch (e) {}
+    });
+  }
+})();
+</script>
+</body>
+</html>

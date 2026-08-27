@@ -44,12 +44,20 @@ Every one of these is marked with a `TODO` comment in the source.
 | --- | --- | --- |
 | 1 | `index.html` — Before/After section | **Real before & after photos.** The two images currently shown are illustrative, *not* photographs of a Clear View job. Replace `assets/design/raw-08-ba-before.png` and `raw-09-ba-after.png`, then run `npm run assets`. Both shots must be taken from the same spot with the same framing or the wipe will not line up. Update the two `alt` texts. |
 | 2 | `index.html` — Testimonials | **Three real customer reviews.** The quotes are clearly-marked placeholders. Replace the text, the name and the neighbourhood, then remove the `quote--placeholder` class. There are deliberately **no star ratings or review counts anywhere on the site** — those may only be added once they come from a real review platform, along with a matching `Review`/`AggregateRating` block in the JSON-LD. |
-| 3 | `index.html` — Quote form | **A real form endpoint.** Set `data-endpoint` on `#quote-form` to a form service URL (Formspree, Basin, Web3Forms) or a Cloudflare Pages Function. Until then the form validates properly and then tells the visitor to phone instead — it never silently swallows a lead. |
+| 3 | ~~Quote form endpoint~~ | **Done.** The form posts to `/api/lead` and submissions are readable at `/admin`. One Cloudflare step is still outstanding — see [ADMIN.md](ADMIN.md). |
 | 4 | `index.html` — Footer | **Opening hours.** Currently reads "Call for availability" because no hours were supplied. Send them and they go here, plus an `openingHoursSpecification` entry in the JSON-LD. |
 | 5 | `index.html` — Auto detailing | **Confirm the detailing services.** The four listed items are deliberately generic. Nothing claims a specific package, price or product brand. |
 
 Nothing on this site invents a review, a rating, a certification, a licence number
 or a before/after statistic.
+
+---
+
+## Leads dashboard
+
+The quote form posts to a Cloudflare Pages Function, submissions are stored in
+D1, and `/admin` lists them behind a password. Setup, the password, how to change
+it, and its security limits are all in **[ADMIN.md](ADMIN.md)**.
 
 ---
 
@@ -66,6 +74,12 @@ assets/
   img/                  optimised AVIF + WebP renditions, favicons, OG card
   video/                hero loop, MP4 + WebM, desktop + mobile
   design/               source artwork and masters (not all committed)
+admin.html              the leads dashboard (served at /admin)
+functions/
+  _auth.js              password check, shared by the endpoints
+  api/lead.js           POST - stores a quote-form submission
+  api/leads.js          POST - lists submissions for /admin
+schema.sql              D1 table definition
 scripts/
   optimize-assets.mjs   images, video, favicons, OG card
   trace-logo.mjs        vectorises the client's raster logo
