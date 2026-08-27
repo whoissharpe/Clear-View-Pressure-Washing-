@@ -79,10 +79,17 @@ const jsName = `site.${jsHash}.js`;
 await mkdir(path.join(OUT, 'assets/js'), { recursive: true });
 await writeFile(path.join(OUT, 'assets/js', jsName), minJs);
 
-const beforeJsRef = html;
-html = html.replace('assets/js/site.js', `assets/js/${jsName}`);
-if (html === beforeJsRef) {
-  throw new Error('script tag not rewritten - check the src in index.html');
+/* Match the <script> tag specifically. A bare string replace would hit the
+   FIRST occurrence of "assets/js/site.js" in the document, which is a prose
+   comment in the quote-form section, leaving the real script tag pointing at
+   the unhashed file. */
+const scriptTag = '<script src="assets/js/site.js" defer></script>';
+if (!html.includes(scriptTag)) {
+  throw new Error('script tag not found verbatim - check index.html');
+}
+html = html.replace(scriptTag, `<script src="assets/js/${jsName}" defer></script>`);
+if (html.includes('src="assets/js/site.js"')) {
+  throw new Error('an unhashed script src survived the rewrite');
 }
 
 /* assets/design holds the working masters and never ships */
