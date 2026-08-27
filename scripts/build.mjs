@@ -16,6 +16,7 @@
 import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { transform } from 'esbuild';
+import { createHash } from 'node:crypto';
 
 const OUT = 'dist';
 
@@ -54,7 +55,7 @@ if (html.includes('assets/css/')) {
   throw new Error('stylesheet links were not replaced - check the pattern in build.mjs');
 }
 
-await writeFile(path.join(OUT, 'index.html'), html);
+
 
 /* ---- static assets -------------------------------------------------------- */
 const COPY = [
@@ -66,16 +67,30 @@ for (const entry of COPY) {
   await cp(entry, path.join(OUT, entry), { recursive: true });
 }
 
-/* JS stays a separate file (deferred, cacheable) but ships minified. */
+/* JS stays a separate file (deferred, cacheable) but ships minified AND
+   content-hashed. Without the hash the filename never changes, so a browser
+   that cached it under the old immutable header would keep running stale
+   JS for up to a year after a deploy. A new hash = a new URL = no stale
+   cache is even possible. */
 const js = await readFile('assets/js/site.js', 'utf8');
 const minJs = (await transform(js, { loader: 'js', minify: true, target: 'es2018' })).code;
+const jsHash = createHash('sha256').update(minJs).digest('hex').slice(0, 8);
+const jsName = `site.${jsHash}.js`;
 await mkdir(path.join(OUT, 'assets/js'), { recursive: true });
-await writeFile(path.join(OUT, 'assets/js/site.js'), minJs);
+await writeFile(path.join(OUT, 'assets/js', jsName), minJs);
+
+const beforeJsRef = html;
+html = html.replace('assets/js/site.js', `assets/js/${jsName}`);
+if (html === beforeJsRef) {
+  throw new Error('script tag not rewritten - check the src in index.html');
+}
 
 /* assets/design holds the working masters and never ships */
+
+await writeFile(path.join(OUT, 'index.html'), html);
 
 const kb = (s) => (s / 1024).toFixed(1) + ' KB';
 console.log('built ' + OUT + '/');
 console.log('  index.html ' + kb(Buffer.byteLength(html)) + ' (css inlined, ' + kb(Buffer.byteLength(inlined)) + ' of it)');
-console.log('  assets/js/site.js ' + kb(Buffer.byteLength(js)) + ' -> ' + kb(Buffer.byteLength(minJs)));
+console.log('  assets/js/' + jsName + ' ' + kb(Buffer.byteLength(js)) + ' -> ' + kb(Buffer.byteLength(minJs)));
 console.log('  copied: ' + COPY.join(', '));
