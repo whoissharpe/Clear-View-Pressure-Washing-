@@ -25,7 +25,33 @@ a { color: var(--cv-accent); }
 :focus-visible { outline: 3px solid var(--cv-accent); outline-offset: 2px; }
 [hidden] { display: none !important; }
 
-.wrap { max-width: 64rem; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+/* Content sits above the watermark. */
+.wrap { max-width: 64rem; margin: 0 auto; padding: 2rem 1.25rem 5rem;
+        position: relative; z-index: 1; }
+
+/* Faint brand mark behind the content - same treatment as the Prime Buck
+   dashboard: fixed, oversized, bled off the right edge, and dropped entirely
+   on narrow screens where it would crowd the list rather than sit behind it.
+
+   Painted as a mask rather than an <img>: logo-mark.svg is fill="currentColor",
+   which an <img> would render solid black. As a mask the file supplies only the
+   shape and this element's own background supplies the colour, so it picks up
+   the accent token and stays consistent with the rest of the page. */
+.bg-mark {
+  position: fixed; top: 46%; right: -8rem; transform: translateY(-50%);
+  width: min(58vw, 40rem); aspect-ratio: 100 / 44.87;
+  background: var(--cv-accent); opacity: .055;
+  z-index: 0; pointer-events: none; user-select: none;
+  -webkit-mask: url("assets/brand/logo-mark.svg") no-repeat center / contain;
+          mask: url("assets/brand/logo-mark.svg") no-repeat center / contain;
+}
+@media (max-width: 63.99rem) { .bg-mark { display: none; } }
+
+/* Without mask support the element would paint as a solid accent rectangle,
+   which is far worse than no watermark at all. */
+@supports not ((mask-image: url("m.svg")) or (-webkit-mask-image: url("m.svg"))) {
+  .bg-mark { display: none; }
+}
 
 .top { display: flex; flex-wrap: wrap; gap: 1rem; align-items: baseline;
        justify-content: space-between; margin-bottom: 1.75rem; }
@@ -97,6 +123,8 @@ button[disabled] { opacity: .55; cursor: default; transform: none; filter: none;
 </style>
 </head>
 <body>
+
+<div class="bg-mark" aria-hidden="true"></div>
 
 <main class="wrap">
 
