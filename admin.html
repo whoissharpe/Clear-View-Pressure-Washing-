@@ -38,14 +38,21 @@ a { color: var(--cv-accent); }
    shape and this element's own background supplies the colour, so it picks up
    the accent token and stays consistent with the rest of the page. */
 .bg-mark {
-  position: fixed; top: 46%; right: -8rem; transform: translateY(-50%);
-  width: min(58vw, 40rem); aspect-ratio: 100 / 44.87;
-  background: var(--cv-accent); opacity: .055;
+  position: fixed; top: 46%; right: -6rem; transform: translateY(-50%);
+  width: min(78vw, 40rem); aspect-ratio: 100 / 44.87;
+  background: var(--cv-bone); opacity: .13;
   z-index: 0; pointer-events: none; user-select: none;
   -webkit-mask: url("assets/brand/logo-mark.svg") no-repeat center / contain;
           mask: url("assets/brand/logo-mark.svg") no-repeat center / contain;
 }
-@media (max-width: 63.99rem) { .bg-mark { display: none; } }
+
+/* On a phone it centres and shrinks rather than disappearing. The lead cards
+   are translucent, so the mark reads through them without hurting the text. */
+@media (max-width: 47.99rem) {
+  .bg-mark { top: 50%; right: auto; left: 50%;
+             transform: translate(-50%, -50%);
+             width: 86vw; opacity: .1; }
+}
 
 /* Without mask support the element would paint as a solid accent rectangle,
    which is far worse than no watermark at all. */
